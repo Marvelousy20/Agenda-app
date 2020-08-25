@@ -5,40 +5,15 @@ import Navbar from './components/navbar'
 import {  MDBContainer, MDBRow, MDBCol, } from 'mdbreact'
 import Events from './components/events'
 import Form from './components/form'
-// import { FaSatelliteDish } from 'react-icons/fa';
 
 function App() {
 
   const [state, setState] = React.useState({
-    events: [
-    {
-      id: 1,
-      time: '12:30',
-      title: 'Breakfast',
-      description: 'Eating my backfrast by 10pm',
-      location: 'Fate road, ilorin, kwara state.'
-    },
-
-    {
-      id: 2,
-      time: '10:30',
-      title: 'Sleep',
-      description: 'I am sleeping very soon',
-      location: 'Behinf rhema chappel'
-    },
-
-    {
-      id: 3,
-      time: '4:30',
-      title: 'Football',
-      description: 'Play football at ori oke field',
-      location: 'Ori oke primary school, ilorin'
-    }, 
-  ],
-
+    events: [],
   modalIsOpen: false,
   }
   )
+  const [country, setCountry] = React.useState('')
 
   const handleAddBtn = () => {
     setState((prevState) => {
@@ -68,28 +43,78 @@ function App() {
     const newArray = [] ;
     newArray.push(...state.events, {id, time, title, description, location}) ;
     setState({events: newArray})
+
+    event.preventDefault()
   }
 
   const handleDelete = id => {
-    const newEvent =  state.events.filter(e => e.id !== id)
+    const newEvent = state.events.filter(e => e.id !== id)
     setState(() => (
       {...state, events: newEvent}
     ))
   }
 
-  const handleSubmit = (event) => {
-    event.preventDefault() ;
-    console.log("clicked!")
-  }
+  const [weather, setWeather] = React.useState({})
+  // const [query, setQuery] = React.useState('Nigeria')
+    
+  React.useEffect(() => {
+    const myData = () => {
+      window.navigator.geolocation.getCurrentPosition((res) => {
+      const lat = res.coords.latitude
+      const long = res.coords.longitude
 
-  const handleSb = (event) => {
-    event.preventDefault()
+      const url = `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${long}&key=7f7c3422b0244b43afc54f31c2ad23c9&language=en&pretty=1`
+      
+      const api = {
+        key: "1f92e6337f4dd8d7396a77a9c3dac39f",
+        base: "https://api.openweathermap.org/data/2.5/"
+      }
 
-    console.log('submitted!')
-}
-  
+      const fetchData = async () => {
+        try {
+          const response = await fetch(url)
+          const {results} = await response.json()
+          console.log(results)
+          return setCountry(results[0].components.country)
+        }
+        catch(err) {
+          console.log(err)
+        }
+      }
+      fetchData()
+      const query = 'nigeria'
+      const weatherData = async () => {
+        try {
+          const weatherResponse = await fetch(`${api.base}weather?q=${query}&units=metric&APPID=${api.key}`)
+          const data = await weatherResponse.json()
+          console.log(data)
+          return setWeather(data)
+        }
+
+        catch(err) {
+          console.log(err)
+        }
+      }
+
+      weatherData()
+      
+      }, () => {
+        console.log('failed!')
+      })  
+    }
+    myData()
+
+  fetch('http://localhost:5000/agenda/').then(response => response.json())
+  .then((responseData) => {
+      console.log(responseData)
+      setState({...state, events: responseData})
+  })
+  .catch(err => console.log(err))
+
+  }, [])
+
   const { events } = state;
-
+  
   return (
     <>
       <Navbar />
@@ -101,22 +126,19 @@ function App() {
             handleClose = {handleClose} 
             handleAddEvent = {handleAddEvent}
             handleInputChange = {handleInputChange}
-            handleSubmit = {handleSubmit}
           />
             <Events 
-              time = {state.time}
-              title = {state.title}
-              description = {state.description}
-              location = {state.location}
               events = {events}
               handleAddBtn = {handleAddBtn}
               handleDelete = {handleDelete}
+              key = {state._id}
             />
           </MDBCol>
 
           <MDBCol>
             <Weather 
               handleLength = {events.length}
+              weather = {weather}
             />
           </MDBCol>
         </MDBRow>

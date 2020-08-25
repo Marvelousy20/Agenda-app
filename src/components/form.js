@@ -2,7 +2,7 @@ import React from 'react'
 import { Modal, Button } from 'react-bootstrap'
 import { MDBInput } from 'mdbreact'
 
-function form({handleShow, handleClose, handleAddEvent, handleInputChange, handleSubmit}) {
+function form({handleShow, handleClose, handleAddEvent, handleInputChange}) {
     return (
     <Modal show = {handleShow}  onHide={handleClose}>
       <form className="mx-3 grey-text" onSubmit = {handleAddEvent}>
