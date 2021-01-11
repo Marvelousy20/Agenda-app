@@ -5,6 +5,7 @@ import moment from 'moment'
 
 
 function events({ events, handleAddBtn, handleDelete, }) {
+    // function that handles date in day date month and year format.
     const dateHandler = (d = new Date()) => {
         const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] ;
         const months = ['January', 'Febuary', 'March', 'April', 'May', 'June', 'July', 'August',

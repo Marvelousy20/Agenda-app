@@ -10,31 +10,36 @@ function App() {
 
   const [state, setState] = React.useState({
     events: [],
-  modalIsOpen: false,
-  }
-  )
+    modalIsOpen: false,
+  })
+
   const [country, setCountry] = React.useState('')
 
+  // Controlled by the event components. Toggles the modal.
   const handleAddBtn = () => {
     setState((prevState) => {
       return {...state, modalIsOpen: !prevState.modalIsOpen}
     })
   }
 
+  // Allows closing of the modal when clicking outside the screen i.e backdrop. 
   const handleClose = () => {
     setState(() => (
       {...state, modalIsOpen: !state.modalIsOpen}
     ))
   }
 
+  // Takes the input field name as an argument.
   const handleInputChange = inputName => e => {
     setState({...state,
       [inputName]: e.target.value
     });
   };
 
+  // Handles the addition of events into both the database and the state.
   const handleAddEvent = (event) => {
-    
+    // Do we have an event? if yes, new event = last event length + 1, if no event, the first event
+    // should have an id of 1.
     const id = state.events.length ? state.events[state.events.length - 1].id + 1 : 1
     const time = state.time
     const title = state.title
@@ -67,6 +72,8 @@ function App() {
     event.preventDefault()
   }
 
+  // deletes an event from the database and use the id provided by mongodb to
+  // delete and event.
   const handleDelete = id => {
     fetch("http://localhost:5000/agenda/" + id, {
       method: 'DELETE'
@@ -80,35 +87,38 @@ function App() {
     ))
   }
 
+  // Gets the weather and displays it depending a users country.
   const [weather, setWeather] = React.useState({})
   // const [query, setQuery] = React.useState('Nigeria')
-    
+  
+  // This code runs immediately when the country changes. Country is my dependency.
   React.useEffect(() => {
     const myData = () => {
+      // get latitude and longitude of the users current position.
       window.navigator.geolocation.getCurrentPosition((res) => {
       const lat = res.coords.latitude
       const long = res.coords.longitude
 
+      // This services gives a specific country using lat and long.
       const url = `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${long}&key=7f7c3422b0244b43afc54f31c2ad23c9&language=en&pretty=1`
       
       const api = {
         key: "1f92e6337f4dd8d7396a77a9c3dac39f",
         base: "https://api.openweathermap.org/data/2.5/"
       }
-
+      // Get the country of a specific user using the lat and long.
       const fetchData = async () => {
         try {
           const response = await fetch(url)
-          const {results} = await response.json()
-          console.log(results)
-          return setCountry(results[0].components.country)
+          const { results } = await response.json()
+          setCountry(results[0].components.country)
         }
         catch(err) {
           console.log(err)
         }
       }
       fetchData()
-      const query = 'nigeria'
+      const query = country ;
       const weatherData = async () => {
         try {
           const weatherResponse = await fetch(`${api.base}weather?q=${query}&units=metric&APPID=${api.key}`)
@@ -129,7 +139,8 @@ function App() {
       })  
     }
     myData()
-
+  
+    // checks and fetches any agenda in the database.
   fetch('http://localhost:5000/agenda/').then(response => response.json())
   .then((responseData) => {
       console.log(responseData)
@@ -137,9 +148,11 @@ function App() {
   })
   .catch(err => console.log(err))
 
-  }, [])
+  }, [country])
 
+  // Destructure events from state.
   const { events } = state;
+  console.log(country)
   
   return (
     <>

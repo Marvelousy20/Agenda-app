@@ -4,7 +4,7 @@ import { MDBInput } from 'mdbreact'
 
 function form({handleShow, handleClose, handleAddEvent, handleInputChange}) {
     return (
-    <Modal show = {handleShow}  onHide={handleClose}>
+    <Modal show = {handleShow} onHide = {handleClose}>
       <form className="mx-3 grey-text" onSubmit = {handleAddEvent}>
         <Modal.Header closeButton>
             <Modal.Title>Add new event</Modal.Title>
