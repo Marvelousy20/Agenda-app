@@ -17,9 +17,6 @@ function events({ events, handleAddBtn, handleDelete, }) {
         
         return (`${day} ${date} ${month} ${year}`)
     }
-    console.log(events)
-
-    // const myDate = events.length > 1 ? new Date(createdAt).getHours() + ':' + new Date(createdAt).getMinutes() : 4 ;
 
     return (
         <div>
@@ -35,7 +32,7 @@ function events({ events, handleAddBtn, handleDelete, }) {
                             <MDBBadge
                             className = 'float-right' 
                             color = 'danger'
-                            onClick = {() => handleDelete(event.id)}
+                            onClick = {() => handleDelete(event._id)}
                             style = {{marginTop: '-25px'}}>
                                 -
                             </MDBBadge>

@@ -34,21 +34,47 @@ function App() {
   };
 
   const handleAddEvent = (event) => {
+    
     const id = state.events.length ? state.events[state.events.length - 1].id + 1 : 1
     const time = state.time
     const title = state.title
     const description = state.description
     const location = state.location
 
+    console.log(title,description,location)
+    const sendData = (url, data) => {
+      fetch(url, {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {'Content-Type': 'application/json'}
+      }).then(response => response.json())
+    }
+
+    const postData = () => {
+      sendData('http://localhost:5000/agenda/add/', {
+        title: title,
+        description: description,
+        location: location
+      })
+    }
+
+    postData()
+    
     const newArray = [] ;
     newArray.push(...state.events, {id, time, title, description, location}) ;
-    setState({events: newArray})
+    setState({events: newArray}) 
 
     event.preventDefault()
   }
 
   const handleDelete = id => {
-    const newEvent = state.events.filter(e => e.id !== id)
+    fetch("http://localhost:5000/agenda/" + id, {
+      method: 'DELETE'
+    })
+    .then(response => response.json())
+    .then(responseData => console.log(responseData))
+
+    const newEvent = state.events.filter(e => e._id !== id)
     setState(() => (
       {...state, events: newEvent}
     ))

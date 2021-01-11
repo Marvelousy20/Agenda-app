@@ -26,14 +26,14 @@ router.route('/add').post((req, res) => {
 })
 
 router.route('/:id').get((req, res) => {
-    Agenda.find(req.params.id)
+    Agenda.findById(req.params.id)
     .then(response => res.json(response))
     .catch(err => res.status(400).json(`Error: ${err}`))
 })
 
 router.route('/:id').delete((req, res) => {
     Agenda.findByIdAndDelete(req.params.id)
-    .then(() => res.json('Agenda delete'))
+    .then(() => res.json('Agenda deleted'))
     .catch((err) => res.status(400).json(`Err ${err}`))
 })
 
